@@ -1,0 +1,143 @@
+@import "/src/styles/utils/_reset";
+@import "/src/styles/utils/_font";
+@import "/src/styles/utils/_global";
+@import "/src/styles/utils/_style";
+
+// Colors
+$background-color: $--black;
+$overlay-color: rgba(0, 0, 0, 0.5);
+
+// Profile Size
+$profile-img-size: 7rem; // 이미지 크기 조정
+$profile-lock-icon-size: 2.5rem; // 잠금 아이콘 크기
+
+// Flex Box
+@mixin flexbox($direction: row, $wrap: nowrap, $justify: center, $align: center, $gap: 0) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: $wrap;
+  justify-content: $justify;
+  align-items: $align;
+  gap: $gap;
+}
+
+// Size (width, inline-size, height, block-size)
+@mixin inline-size($value) {
+  width: $value;
+  inline-size: $value;
+}
+
+@mixin block-size($value) {
+  height: $value;
+  block-size: $value;
+}
+
+@mixin square-size($size) {
+  @include inline-size($size);
+  @include block-size($size);
+}
+
+// Profile Selection Page
+body {
+  background-color: $background-color;
+}
+
+.profile__wrap {
+  font-size: 0.75rem;
+  height: 100vh;
+  @include flexbox(column);
+  align-items: center;
+  justify-content: center;
+
+  &__container {
+    text-align: center;
+    color: $--white;
+
+    .head__form {
+      @include flexbox(column);
+      align-items: center;
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .desc {
+        font-size: 1rem;
+        color: $--gray-500;
+      }
+    }
+  }
+
+  .profile__form {
+    @include flexbox(row, nowrap, center, center, 2rem);
+    margin-top: 2rem;
+    list-style: none;
+
+    &--item {
+      text-align: center;
+
+      & .item__form:hover {
+        transform: translateY(-5%);
+      }
+
+      & .item__form {
+        transition: all 0.3s ease 0s;
+        @include square-size($profile-img-size);
+        border-radius: 0.25rem;
+        overflow: hidden;
+        display: inline-block;
+        position: relative;
+
+        .user-profile {
+          @include square-size(100%);
+          position: relative;
+
+          img {
+            @include square-size(100%);
+            object-fit: cover;
+          }
+        }
+
+        .icon {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          @include square-size($profile-lock-icon-size);
+          z-index: 2;
+
+          img {
+            @include square-size(100%);
+          }
+        }
+
+        &.locked::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: $overlay-color;
+          z-index: 1;
+        }
+
+        &:hover {
+          outline: 3px solid $--white;
+        }
+
+        &:active {
+          outline: 3px solid $--white;
+        }
+      }
+
+      .name {
+        margin-top: 0.5rem;
+        color: $--gray-200;
+        font-size: 1rem;
+      }
+    }
+  }
+}
