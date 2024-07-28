@@ -17,7 +17,6 @@ export default defineConfig({
         // 기본 입력 파일을 설정 (index.html이 src 폴더 내에 위치한다고 가정)
         main: resolve(__dirname, "index.html"),
         // 아래 경로 페이지도 함께 컴파일
-        atom: resolve(__dirname, "src/pages/atom/atom.html"),
         // findId: resolve(__dirname, 'src/pages/findId/index.html'),
         // findPw: resolve(__dirname, 'src/pages/findPw/index.html'),
         // landing: resolve(__dirname, 'src/pages/landing/index.html'),
