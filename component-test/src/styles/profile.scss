@@ -1,0 +1,132 @@
+@import '/src/styles/utils/_reset';
+@import '/src/styles/utils/_font';
+@import '/src/styles/utils/_global';
+@import '/src/styles/utils/_style';
+
+// Colors
+$background-color: $--black;
+$overlay-color: rgba(0, 0, 0, 0.5);
+
+// Profile Size
+$profile-img-size: 7rem;
+$profile-lock-icon-size: 2.5rem;
+
+// Flex Box
+@mixin flexbox($direction: row, $wrap: nowrap, $justify: center, $align: center, $gap: 0) {
+  display: flex;
+  flex-direction: $direction;
+  flex-wrap: $wrap;
+  justify-content: $justify;
+  align-items: $align;
+  gap: $gap;
+}
+
+// Size (width, inline-size, height, block-size)
+@mixin inline-size($value) {
+  width: $value;
+  inline-size: $value;
+}
+
+@mixin block-size($value) {
+  height: $value;
+  block-size: $value;
+}
+
+@mixin square-size($size) {
+  @include inline-size($size);
+  @include block-size($size);
+}
+
+// Profile Selection Page
+body {
+  background-color: $background-color;
+}
+
+.profile__wrap {
+  font-size: 0.75rem;
+  height: 100vh;
+  @include flexbox(column);
+  align-items: center;
+  justify-content: center;
+}
+
+.profile {
+  &__header {
+    text-align: center;
+    color: $--white;
+  }
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  &__description {
+    font-size: 1rem;
+    color: $--gray-500;
+  }
+}
+
+.profile__list {
+  @include flexbox(row, nowrap, center, center, 2rem);
+  margin-top: 2rem;
+  list-style: none;
+}
+
+.profile__item {
+  @include flexbox(column, nowrap);
+  text-align: center;
+
+  &--locked::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $overlay-color;
+    z-index: 1;
+  }
+
+  .profile__image-wrapper {
+    @include square-size($profile-img-size);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    display: inline-block;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      outline: 3px solid $--white;
+      transform: translateY(-5%);
+    }
+
+    &:active {
+      outline: 3px solid $--white;
+    }
+  }
+
+  .profile__image {
+    @include square-size(100%);
+    object-fit: cover;
+  }
+
+  .icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    @include square-size($profile-lock-icon-size);
+    z-index: 2;
+
+    img {
+      @include square-size(100%);
+    }
+  }
+
+  .profile__name {
+    margin-top: 1rem;
+    color: $--gray-200;
+    font-size: 1rem;
+  }
+}
