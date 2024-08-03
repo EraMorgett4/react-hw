@@ -4,3 +4,4 @@
 
 1. [7.22 과제](https://github.com/EraMorgett4/React-Yamu)
 2. [7.27 과제](/02-atomic-component/README.md)
+3. [8.4 과제](/component-test/README.md)
