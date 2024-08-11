@@ -1,66 +1,65 @@
 import { PLAYER } from '@/constants/constants';
 
-export function calculateWinner(squares, boardSize) {
-  const lines = [];
+export const calculateWinner = (squares, boardSize, lastMoveRow, lastMoveCol) => {
+  const lastMoveIndex = lastMoveRow * boardSize + lastMoveCol;
+  const player = squares[lastMoveIndex];
+  // console.log(squares);
 
-  // 가로와 세로 체크
-  for (let row = 0; row < boardSize; row++) {
-    for (let col = 0; col < boardSize - 4; col++) {
-      lines.push([
-        row * boardSize + col,
-        row * boardSize + col + 1,
-        row * boardSize + col + 2,
-        row * boardSize + col + 3,
-        row * boardSize + col + 4,
-      ]);
+  if (!player) return null;
 
-      lines.push([
-        col * boardSize + row,
-        (col + 1) * boardSize + row,
-        (col + 2) * boardSize + row,
-        (col + 3) * boardSize + row,
-        (col + 4) * boardSize + row,
-      ]);
-    }
-  }
+  const directions = [
+    { row: 0, col: 1 }, // 가로
+    { row: 1, col: 0 }, // 세로
+    { row: 1, col: 1 }, // \
+    { row: 1, col: -1 }, // /
+  ];
 
-  // 대각선 체크 (\와 /)
-  for (let row = 0; row < boardSize - 4; row++) {
-    for (let col = 0; col < boardSize - 4; col++) {
-      lines.push([
-        row * boardSize + col,
-        (row + 1) * boardSize + col + 1,
-        (row + 2) * boardSize + col + 2,
-        (row + 3) * boardSize + col + 3,
-        (row + 4) * boardSize + col + 4,
-      ]);
+  const countInRow = (dirRow, dirCol) => {
+    let count = 0;
+    let row = lastMoveRow;
+    let col = lastMoveCol;
 
-      lines.push([
-        (row + 4) * boardSize + col,
-        (row + 3) * boardSize + col + 1,
-        (row + 2) * boardSize + col + 2,
-        (row + 1) * boardSize + col + 3,
-        row * boardSize + col + 4,
-      ]);
-    }
-  }
-
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c, d, e] = lines[i];
-    if (
-      squares[a] &&
-      squares[a] === squares[b] &&
-      squares[a] === squares[c] &&
-      squares[a] === squares[d] &&
-      squares[a] === squares[e]
+    while (
+      row >= 0 &&
+      row < boardSize &&
+      col >= 0 &&
+      col < boardSize &&
+      squares[row * boardSize + col] === player
     ) {
-      return squares[a];
+      count++;
+      row += dirRow;
+      col += dirCol;
+    }
+
+    row = lastMoveRow - dirRow;
+    col = lastMoveCol - dirCol;
+
+    while (
+      row >= 0 &&
+      row < boardSize &&
+      col >= 0 &&
+      col < boardSize &&
+      squares[row * boardSize + col] === player
+    ) {
+      count++;
+      row -= dirRow;
+      col -= dirCol;
+    }
+
+    return count;
+  };
+
+  for (let i = 0; i < directions.length; i++) {
+    const { row, col } = directions[i];
+    if (countInRow(row, col) >= 5) {
+      return player;
     }
   }
-  return null;
-}
 
-export function handlePlay({
+  return null;
+};
+
+export const handlePlay = ({
   index,
   currentSquares,
   isNext,
@@ -68,19 +67,22 @@ export function handlePlay({
   history,
   currentMove,
   boardSize,
-  calculateWinner,
+  row,
+  col,
   setHistory,
   setCurrentMove,
   setIsNext,
   setWinner,
   setIsDraw,
-}) {
+  setLastMove,
+}) => {
   if (currentSquares[index] || winner) return;
 
   const nextSquares = currentSquares.slice();
   nextSquares[index] = isNext ? PLAYER.ONE : PLAYER.TWO;
 
-  const gameWinner = calculateWinner(nextSquares, boardSize);
+  // 승자 확인
+  const gameWinner = calculateWinner(nextSquares, boardSize, row, col);
   if (gameWinner) {
     setWinner(gameWinner);
     setIsDraw(false);
@@ -89,13 +91,15 @@ export function handlePlay({
     return;
   }
 
+  // 무승부 확인
   if (nextSquares.every((square) => square !== null)) {
     setIsDraw(true);
     setWinner(null);
   } else {
+    // 승자도 없고 무승부도 아니면 다음 플레이어에게 차례를 넘김
     setIsNext(!isNext);
+    setHistory([...history.slice(0, currentMove + 1), nextSquares]);
+    setCurrentMove(currentMove + 1);
+    setLastMove({ row, col }); // 마지막으로 놓은 돌의 좌표 업데이트
   }
-
-  setHistory([...history.slice(0, currentMove + 1), nextSquares]);
-  setCurrentMove(currentMove + 1);
-}
+};

@@ -69,7 +69,7 @@ History: 사용자가 이전 기보로 돌아갈 수 있는 기능을 제공하�
 
 - 스타일링에 필요한 scss파일을 모듈로 불러옵니다.
 
-- 필요한 하위컴포넌트(`Board`, `History`를 불러옵니다.
+- 필요한 하위컴포넌트(`Board`, `History`, `Status`)를 불러옵니다.
 
 - 별도로 분리한 상수 `PLAYER`와 게임에 필요한 로직 `gameLogic`의 `handlePlay`, `calculateWinner`을 불러옵니다.
 
@@ -81,7 +81,7 @@ History: 사용자가 이전 기보로 돌아갈 수 있는 기능을 제공하�
 
 </div>
 
-- Game 컴포넌트입니다.
+- Game 컴포넌트입니다. State Lifting이 적용되어있어 Game컴포넌트에서 ㅓ여러 상태를 관리합니다.
 
 - **상태 관리**
 
@@ -103,12 +103,12 @@ History: 사용자가 이전 기보로 돌아갈 수 있는 기능을 제공하�
 
 - **핸들러 함수**
 
-  - `onSquareClick` : 사용자가 게임 보드의 칸을 클릭했을 때 호출되는 함수로, 외부로 분리한 `handlePlay`를 불러와 사용합니다.
+  - `onSquareClick` : 사용자가 게임 보드의 칸을 클릭했을 때 호출되는 함수로, 외부로 분리한 `handlePlay`를 불러와 사용합니다. 마지막으로 놓은 돌의 위치를 `row` `col` 값으로 전달합니다.
   - `jumpTo` : 사용자가 히스토리 클릭 시 이동할 부분을 나타내는 함수입니다. 이동할 인덱스를 업데이트하고, `isNext`, `winner`, `isDraw` 상태를 갱신합니다.
 
 - **JSX**
 
-  - `Board` 컴포넌트와 `History`컴포넌트를 렌더링합니다.
+  - `Status`컴포넌트, `Board` 컴포넌트와 `History`컴포넌트를 렌더링합니다.
     - 현재 보드상태, 승자정보, 다음 플레이어 정보 등을 props로 전달하여 렌더링합니다.
     - 이동기록, `jumpTo`, 다음 플레이어 정보를 props로 전달합니다.
     - `S` 객체를 통해 스타일을 적용합니다.
@@ -125,7 +125,13 @@ History: 사용자가 이전 기보로 돌아갈 수 있는 기능을 제공하�
 
 - 승리조건을 확인하는 함수 `calculateWinner`입니다.
 
-- 현재 게임보드상태를 나타내는 배열 `squares`로 부터, 2중 `for`문을 통하여 오목이 완성되었는지 확인합니다.
+- 현재 게임보드상태를 나타내는 1차원 배열 `squares`와, 보드의 크기를 나타내는 `boardSize`, 그리고 마지막 돌이 놓인 위치를 전달받아 승리조건이 갖춰졌는지 계산합니다.
+
+- 2차원 배열의 좌표를 1차원 좌표로 변환한 것이 `lastMoveIndex`이고, 해당 squares 배열에서의 플레이어의 위치를 `player`로 나타내었습니다.
+
+- 해당 좌표를 기준으로 4방향에 대해(가로, 세로, 좌대각, 우대각) 오목을 이루고 있는지 확인합니다.
+
+  - `for`문을 돌면서 4방향에 대해서, `countInRow` 함수를 통해 주어진 방향에 대해 연속된 돌의 갯수를 셉니다. 오목을 이룬다면 현재 플레이어의 좌표값을 반환합니다.
 
 <div align = "center">
 
@@ -133,11 +139,95 @@ History: 사용자가 이전 기보로 돌아갈 수 있는 기능을 제공하�
 
 </div>
 
--
+- 임의의 보드 칸 클릭시 불러오는 함수로, 게임의 상태를 업데이트 하고 승리여부를 판단하는 함수입니다.
+- 클릭한 위치에 돌을 놓고, 그에 따른 상태변화를 처리하고, 승리/무승부를 확인합니다.
+
+- 초기 if를 통하여 이미 승자가 결정된 경우/이미 채워진 칸일 경우 함수를 바로 종료합니다.
+
+- 현재 보드의 상태를 복사하여 새로운 배열인 `nextSquares`를 만들고, 클릭한 위치에 현재 차례인 플레이어의 돌을 놓습니다.
+
+- `calculateWinner`를 실행한 결과를 담은 `gameWinner`를 통해, 승자의 여부에 따라 상태를 업데이트합니다.
+
+- 무승부를 확인하는 로직으로, 모든 칸이 채워져있는데 승자는 없는 경우, 무승부로 처리합니다.
+
+  ```js
+    if (nextSquares.every((square) => square !== null)) {
+    setIsDraw(true);
+    setWinner(null);
+  ```
+
+- 승리/무승부를 확인했다면, 다음 플레이어에게 차례를 넘기도록 상태를 업데이트합니다.
+  ```js
+  setIsNext(!isNext);
+  setHistory([...history.slice(0, currentMove + 1), nextSquares]);
+  setCurrentMove(currentMove + 1);
+  setLastMove({ row, col }); // 마지막으로 놓은 돌의 좌표 업데이트
+  ```
+
+#### 4. Board.jsx
+
+<div align = "center">
+
+![Boardt](/3rd-week/public/img/forMD/week3/Board.png)
+
+</div>
+
+- `Board` 컴포넌트입니다. `Game`컴포넌트로부터 전달받은 `squares`, `onPlay`, `boardSize`를 통해 단순히 UI를 렌더링합니다.
+- prop-types로 props의 타입을 검사합니다.
+
+#### 5. Squares.jsx
+
+<div align = "center">
+
+![Squares](/3rd-week/public/img/forMD/week3/Squares.png)
+
+</div>
+
+- `Squares` 컴포넌트는 게임 보드의 모든 칸을 렌더링합니다.
+
+- `renderRow` 함수를 통해 특정 rowIndex를 기준으로, 그 행의 각 칸을 렌더링 합니다. `Square`컴포넌트에 `value`와 `onSquareClick`을 전달합니다.
+
+- `renderBoard` 함수를 통해 전체 보드를 렌더링합니다. 각 `key`에 대해 `board__row`라는 스타일을 적용합니다.
+
+#### 6. Square.jsx
+
+<div align = "center">
+
+![Square](/3rd-week/public/img/forMD/week3/Square.png)
+
+</div>
+
+- `Square` 컴포넌트는 게임보드의 각 칸을 렌더링합니다. 상위 컴포넌트로부터 전달받은 `value`와 `onSquareClick`을 통해 칸에 삽입할 플레이어돌을 결정합니다. 클릭된 칸의 인덱스를 상위 컴포넌트로 전달할 수 있습니다.
+
+#### 7. Status.jsx
+
+<div align = "center">
+
+![Status](/3rd-week/public/img/forMD/week3/Status.png)
+
+</div>
+
+- `Status`컴포넌트는 현재 게임의 상태를 화면에 표시하는 역할을 합니다. `winner`, `isDraw`, `nextPlayer`를 전달받아 렌더링합니다.
+
+- `winner`가 존재하면 승리 메시지를, `isDraw`가 `true`이면 무승부 메시지를, 그 외에는 현재 차례 메시지를 반환합니다.
+
+#### 8. History.jsx
+
+<div align = "center">
+
+![History](/3rd-week/public/img/forMD/week3/History.png)
+
+</div>
+
+- `getDescription`을 통해 각 이동에 대한 설명을 반환합니다.
+
+- `renderHistoryItems`를 통해 이동 기록을 렌더링합니다. `history`배열을 순회하면서, 각 이동을 `li`와 `button`요소로 렌더링합니다.
+
+- `button`요소 내에 `className`에, 기본적인 버튼의 스타일링을 적용하는 `S.history__button`과, 클릭 시 적용되는 스타일링인 `S.active`로 구성되어있습니다.
 
 ---
 
-### 배운 점
+### 배운 점 및 느낀점
 
 #### 1. 스크롤 바 조정을 위해 사용한 useRef에 관한 내용입니다.
 
@@ -180,5 +270,20 @@ History: 사용자가 이전 기보로 돌아갈 수 있는 기능을 제공하�
    - 예를 들어, `Game.module.scss` 파일에서 `.game` 클래스를 정의하면, 실제로는 `Game_game__3jYh4`와 같은 고유한 이름으로 변환됩니다.
 
 3. **스타일 적용**:
-   - 스타일 파일을 import하면 해당 스타일들이 객체 형태로 제공됩니다. 이 객체를 통해 스타일을 적용할 수 있습니다.
+
+   - 스타일 파일을 import하면 해당 스타일들이 **객체** 형태로 제공됩니다. 이 객체를 통해 스타일을 적용할 수 있습니다.
    - 예를 들어, `Game.module.scss` 파일에서 정의한 `.game` 클래스를 적용하려면, `S.game`과 같은 형태로 사용합니다.
+
+#### 3. lifting state up
+
+컴포넌트 간의 상태 관리를 위해 가장 일반적으로 사용하는 방법은 "상태 끌어올리기(lifting state up)"입니다. 이 방법에서는 상태를 자식 컴포넌트가 아닌 공통 부모 컴포넌트에 위치시킵니다.
+
+1. **상태 끌어올리기**: 자식 컴포넌트에서 상태를 제거하고, 부모 컴포넌트로 상태를 이동시켜 상태를 관리합니다.
+
+2. **Props를 통한 상태 전달**: 부모 컴포넌트에서 상태와 상태를 변경할 수 있는 함수를 자식 컴포넌트에 `props`로 전달합니다.
+
+3. **이벤트 핸들러 사용**: 자식 컴포넌트에서 이벤트가 발생할 때, 부모 컴포넌트에서 상태를 업데이트하는 방식을 사용합니다.
+
+이 방법을 통해 컴포넌트 간의 상태 동기화 문제를 해결할 수 있으며, 보다 체계적인 상태 관리를 할 수 있습니다.
+
+하지만 이번 컴포넌트 구성에 있어선 상태 끌어올리기를 충분히 활용하진 못했단 느낌이 들었습니다. 예제가 그렇다기보단, 제가 잘 활용을 못한 것 같습니다. 단순히 매개변수처럼 props를 전달한 것에 그친 것 같아 아쉽습니다.

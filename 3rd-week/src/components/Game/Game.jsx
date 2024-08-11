@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import Board from '@/components/Board/Board';
 import History from '@/components/History/History';
+import Status from '@/components/Status/Status';
 import S from './Game.module.scss';
+import { handlePlay } from '@/utils/gameLogic';
 import { PLAYER } from '@/constants/constants';
-import { handlePlay, calculateWinner } from '@/utils/gameLogic';
 
 function Game() {
   const boardSize = 19; // 보드 크기 설정
@@ -12,12 +13,16 @@ function Game() {
   const [isNext, setIsNext] = useState(true);
   const [winner, setWinner] = useState(null);
   const [isDraw, setIsDraw] = useState(false);
+  const [lastMove, setLastMove] = useState({ row: null, col: null });
 
   const historyEndRef = useRef(null);
 
   const currentSquares = history[currentMove];
 
   const onSquareClick = (index) => {
+    const row = Math.floor(index / boardSize);
+    const col = index % boardSize;
+
     handlePlay({
       index,
       currentSquares,
@@ -26,12 +31,14 @@ function Game() {
       history,
       currentMove,
       boardSize,
-      calculateWinner,
+      row,
+      col,
       setHistory,
       setCurrentMove,
       setIsNext,
       setWinner,
       setIsDraw,
+      setLastMove,
     });
   };
 
@@ -40,6 +47,7 @@ function Game() {
     setIsNext(move % 2 === 0);
     setWinner(null);
     setIsDraw(false);
+    setLastMove({ row: null, col: null }); // 좌표 초기화
   };
 
   useEffect(() => {
@@ -49,15 +57,9 @@ function Game() {
 
   return (
     <div className={S.game}>
+      <Status winner={winner} nextPlayer={isNext ? PLAYER.ONE : PLAYER.TWO} isDraw={isDraw} />
       <div className={S.game__board}>
-        <Board
-          winnerInfo={{ winner }}
-          nextPlayer={isNext ? PLAYER.ONE : PLAYER.TWO}
-          isDraw={isDraw}
-          squares={currentSquares}
-          onPlay={onSquareClick}
-          boardSize={boardSize}
-        />
+        <Board squares={currentSquares} onPlay={onSquareClick} boardSize={boardSize} />
       </div>
       <div className={S.game__historyWrapper}>
         <h2 className={S.history__title}>Game History</h2>

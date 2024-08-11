@@ -9,7 +9,11 @@ Status.propTypes = {
 };
 
 function Status({ winner, nextPlayer, isDraw }) {
-  const status = winner ? `Winner: ${winner}` : isDraw ? '비겼습니다.' : `다음 차례: ${nextPlayer}`;
+  const status = winner
+    ? `${winner}가 승리했습니다!`
+    : isDraw
+      ? '비겼습니다.'
+      : `현재 차례: ${nextPlayer}`;
 
   return <header className={S.status}>{status}</header>;
 }

@@ -8,23 +8,27 @@ History.propTypes = {
 };
 
 function History({ history, jumpTo, currentMove }) {
-  return (
-    <ol className={S.history}>
-      {history.map((squares, move) => {
-        const description = move > 0 ? `${move}번째 기보로 이동` : '처음으로';
-        return (
-          <li key={move} className={S.history__item}>
-            <button
-              className={`${S.history__button} ${move === currentMove ? S.active : ''}`}
-              onClick={() => jumpTo(move)}
-            >
-              {description}
-            </button>
-          </li>
-        );
-      })}
-    </ol>
-  );
+  const getDescription = (move) => {
+    return move > 0 ? `${move}번째 수로 이동` : '처음으로';
+  };
+
+  const renderHistoryItems = () => {
+    return history.map((squares, move) => {
+      const description = getDescription(move);
+      return (
+        <li key={move} className={S.history__item}>
+          <button
+            className={`${S.history__button} ${move === currentMove ? S.active : ''}`}
+            onClick={() => jumpTo(move)}
+          >
+            {description}
+          </button>
+        </li>
+      );
+    });
+  };
+
+  return <ol className={S.history}>{renderHistoryItems()}</ol>;
 }
 
 export default History;
