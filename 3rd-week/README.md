@@ -17,6 +17,7 @@
 ## 과제 수행 내용
 
 저는 Tic Tac Toe에서 확장한 오목게임을 작성하였습니다.
+![결과](/3rd-week/public/img/forMD/week3/result.png)
 
 ### 파일 경로 구성
 
