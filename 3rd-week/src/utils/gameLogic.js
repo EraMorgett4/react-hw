@@ -78,7 +78,7 @@ export function handlePlay({
   if (currentSquares[index] || winner) return;
 
   const nextSquares = currentSquares.slice();
-  nextSquares[index] = isNext ? PLAYER.ONE : PLAYER.TWO; // PLAYER 상수 사용
+  nextSquares[index] = isNext ? PLAYER.ONE : PLAYER.TWO;
 
   const gameWinner = calculateWinner(nextSquares, boardSize);
   if (gameWinner) {

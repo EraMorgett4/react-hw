@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import Board from '../Board/Board';
-import History from '../History/History';
+import Board from '@/components/Board/Board';
+import History from '@/components/History/History';
 import S from './Game.module.scss';
 import { PLAYER } from '@/constants/constants';
 import { handlePlay, calculateWinner } from '@/utils/gameLogic';

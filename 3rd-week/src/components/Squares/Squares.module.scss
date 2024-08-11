@@ -3,9 +3,9 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-}
 
-.board__row {
-  display: flex;
-  gap: 2px;
+  &__row {
+    display: flex;
+    gap: 2px;
+  }
 }

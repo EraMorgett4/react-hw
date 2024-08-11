@@ -1,4 +1,4 @@
-@import '../../styles/utils/_style.scss';
+@import '@/styles/utils/_style.scss';
 
 .history {
   display: flex;
@@ -7,29 +7,29 @@
   align-items: center;
   gap: 0.5rem;
   width: 100%;
-}
 
-.history__item {
-  margin-bottom: 0.3125rem;
-}
+  &__item {
+    margin-bottom: 0.3125rem;
+  }
 
-.history__button {
-  background: $--gray-100;
-  border: none;
-  border-radius: 0.3125rem;
-  padding: 0.3125rem 0.625rem;
-  cursor: pointer;
-  width: 100%;
-}
+  &__button {
+    background: $--gray-100;
+    border: none;
+    border-radius: 0.3125rem;
+    padding: 0.3125rem 0.625rem;
+    cursor: pointer;
+    width: 100%;
 
-.history__button:hover {
-  background: $--white;
-}
+    &:hover {
+      background: $--white;
+    }
 
-.history__button:focus {
-  outline: none;
-}
+    &:focus {
+      outline: none;
+    }
+  }
 
-.active {
-  font-weight: bold;
+  .active {
+    font-weight: bold;
+  }
 }
