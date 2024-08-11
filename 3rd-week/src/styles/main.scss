@@ -1,0 +1,9 @@
+@import './utils/_reset.scss';
+@import './utils/_global.scss';
+@import './utils/_font.scss';
+@import './utils/_style.scss';
+
+body {
+  margin-top: 1rem;
+  color: $--white;
+}
