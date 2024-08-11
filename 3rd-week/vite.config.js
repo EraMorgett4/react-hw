@@ -9,7 +9,9 @@ export default defineConfig({
   publicDir: resolve(__dirname, 'public'),
   resolve: {
     // @ 기호를 사용하여 src 폴더의 경로를 별칭으로 설정
-    alias: fileURLToPath(new URL('./src', import.meta.url)),
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
   build: {
     // 빌드 결과물이 저장될 폴더를 dist로 설정

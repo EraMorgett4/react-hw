@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import Board from '../Board/Board';
 import History from '../History/History';
 import S from './Game.module.scss';
+import { PLAYER } from '@/constants/constants';
+import { handlePlay, calculateWinner } from '@/utils/gameLogic';
 
 function Game() {
   const boardSize = 19; // 보드 크기 설정
@@ -15,86 +17,22 @@ function Game() {
 
   const currentSquares = history[currentMove];
 
-  const calculateWinner = (squares) => {
-    const lines = [];
-
-    // 가로와 세로 체크
-    for (let row = 0; row < boardSize; row++) {
-      for (let col = 0; col < boardSize - 4; col++) {
-        lines.push([
-          row * boardSize + col,
-          row * boardSize + col + 1,
-          row * boardSize + col + 2,
-          row * boardSize + col + 3,
-          row * boardSize + col + 4,
-        ]);
-
-        lines.push([
-          col * boardSize + row,
-          (col + 1) * boardSize + row,
-          (col + 2) * boardSize + row,
-          (col + 3) * boardSize + row,
-          (col + 4) * boardSize + row,
-        ]);
-      }
-    }
-
-    // 대각선 체크 (\와 /)
-    for (let row = 0; row < boardSize - 4; row++) {
-      for (let col = 0; col < boardSize - 4; col++) {
-        lines.push([
-          row * boardSize + col,
-          (row + 1) * boardSize + col + 1,
-          (row + 2) * boardSize + col + 2,
-          (row + 3) * boardSize + col + 3,
-          (row + 4) * boardSize + col + 4,
-        ]);
-
-        lines.push([
-          (row + 4) * boardSize + col,
-          (row + 3) * boardSize + col + 1,
-          (row + 2) * boardSize + col + 2,
-          (row + 1) * boardSize + col + 3,
-          row * boardSize + col + 4,
-        ]);
-      }
-    }
-
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c, d, e] = lines[i];
-      if (
-        squares[a] &&
-        squares[a] === squares[b] &&
-        squares[a] === squares[c] &&
-        squares[a] === squares[d] &&
-        squares[a] === squares[e]
-      ) {
-        return squares[a];
-      }
-    }
-    return null;
-  };
-
-  const handlePlay = (index) => {
-    if (currentSquares[index] || winner) return;
-
-    const nextSquares = currentSquares.slice();
-    nextSquares[index] = isNext ? 'X' : 'O';
-
-    const gameWinner = calculateWinner(nextSquares);
-    if (gameWinner) {
-      setWinner(gameWinner);
-      return;
-    }
-
-    // 무승부 체크: 모든 칸이 채워졌지만 승자가 없으면 무승부로 설정
-    if (nextSquares.every((square) => square !== null)) {
-      setIsDraw(true);
-    } else {
-      setIsNext(!isNext);
-      setHistory([...history.slice(0, currentMove + 1), nextSquares]);
-      setCurrentMove(currentMove + 1);
-    }
+  const onSquareClick = (index) => {
+    handlePlay({
+      index,
+      currentSquares,
+      isNext,
+      winner,
+      history,
+      currentMove,
+      boardSize,
+      calculateWinner,
+      setHistory,
+      setCurrentMove,
+      setIsNext,
+      setWinner,
+      setIsDraw,
+    });
   };
 
   const jumpTo = (move) => {
@@ -114,10 +52,10 @@ function Game() {
       <div className={S.game__board}>
         <Board
           winnerInfo={{ winner }}
-          nextPlayer={isNext ? 'X' : 'O'}
+          nextPlayer={isNext ? PLAYER.ONE : PLAYER.TWO}
           isDraw={isDraw}
           squares={currentSquares}
-          onPlay={handlePlay}
+          onPlay={onSquareClick}
           boardSize={boardSize}
         />
       </div>

@@ -11,7 +11,7 @@ function History({ history, jumpTo, currentMove }) {
   return (
     <ol className={S.history}>
       {history.map((squares, move) => {
-        const description = move > 0 ? `Go to move #${move}` : 'Go to game start';
+        const description = move > 0 ? `${move}번째 기보로 이동` : '처음으로';
         return (
           <li key={move} className={S.history__item}>
             <button

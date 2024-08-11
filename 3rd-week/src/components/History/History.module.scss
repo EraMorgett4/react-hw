@@ -1,26 +1,29 @@
+@import '../../styles/utils/_style.scss';
+
 .history {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
 }
 
 .history__item {
-  margin-bottom: 5px;
+  margin-bottom: 0.3125rem;
 }
 
 .history__button {
-  background: #f0f0f0;
+  background: $--gray-100;
   border: none;
-  padding: 5px 10px;
+  border-radius: 0.3125rem;
+  padding: 0.3125rem 0.625rem;
   cursor: pointer;
   width: 100%;
 }
 
 .history__button:hover {
-  background: #ddd;
+  background: $--white;
 }
 
 .history__button:focus {

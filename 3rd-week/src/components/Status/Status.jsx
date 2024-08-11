@@ -1,5 +1,6 @@
 import { string, bool } from 'prop-types';
 import S from './Status.module.scss';
+import { PLAYER } from '../../constants/constants';
 
 Status.propTypes = {
   winner: string,
