@@ -3,7 +3,15 @@
 @import './utils/_font.scss';
 @import './utils/_style.scss';
 
+@import '../components/Square/Square.module.scss';
+@import '../components/Squares/Squares.module.scss';
+@import '../components/Board/Board.module.scss';
+@import '../components/Status/Status.module.scss';
+@import '../components/History/History.module.scss';
+@import '../components/Game/Game.module.scss';
+
 body {
   margin-top: 1rem;
   color: $--white;
+  min-width: 800px;
 }

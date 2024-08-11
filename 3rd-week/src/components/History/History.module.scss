@@ -1,0 +1,32 @@
+.history {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.history__item {
+  margin-bottom: 5px;
+}
+
+.history__button {
+  background: #f0f0f0;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.history__button:hover {
+  background: #ddd;
+}
+
+.history__button:focus {
+  outline: none;
+}
+
+.active {
+  font-weight: bold;
+}

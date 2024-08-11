@@ -118,7 +118,7 @@ function Game() {
           isDraw={isDraw}
           squares={currentSquares}
           onPlay={handlePlay}
-          boardSize={boardSize} // boardSize 전달
+          boardSize={boardSize}
         />
       </div>
       <div className={S.game__historyWrapper}>
